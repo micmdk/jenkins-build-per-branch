@@ -94,15 +94,20 @@ class JenkinsJobManager {
     }
 
     List<TemplateJob> findRequiredTemplateJobs(List<String> allJobNames) {
-        String regex = /^$templateJobPrefix-$templateBranchName-[^-]*$/
+        String regex = /^($templateJobPrefix)-($templateBranchName)-([^-]*)$/
 
         List<TemplateJob> templateJobs = allJobNames.findResults { String jobName ->
             TemplateJob templateJob = null
             jobName.find(regex) { full, baseJobName, branchName ->
+		println “jobName: “ + full
+		println “baseJobName: “ + baseJobName
+		println “templateBranchName: “ + branchName
                 templateJob = new TemplateJob(jobName: full, baseJobName: baseJobName, templateBranchName: branchName)
             }
             return templateJob
         }
+
+	println “found jobs: ” + templateJobs.size()
 
         assert templateJobs?.size() > 0, "Unable to find any jobs matching template regex: $regex\nYou need at least one job to match the templateJobPrefix and templateBranchName suffix arguments"
         return templateJobs
