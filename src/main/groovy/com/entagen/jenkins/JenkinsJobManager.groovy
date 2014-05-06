@@ -113,7 +113,7 @@ class JenkinsJobManager {
 
 	   print "found jobs: " + templateJobs.size()
 
-        if templateJobs.size() == 0
+        if (templateJobs.size() == 0)
             println "Unable to find any jobs matching template regex: $regex\nYou need at least one job to match the templateJobPrefix and templateBranchName suffix arguments"
         return templateJobs
     }
