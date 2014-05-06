@@ -51,12 +51,10 @@ class JenkinsJobManager {
 
         println "currentTemplateDrivenJobNames:\n\t${currentTemplateDrivenJobNames.join('\n\t')}"
         println "nonTemplateBranchNames:\n\t${nonTemplateBranchNames.join('\n\t')}"
-        println "expectedJobs:\n\t${expectedJobs.join('\n\t')}"
+        println "expectedJobs:\n\t${expectedJobs.jobName.join('\n\t')}"
 
         createMissingJobs(expectedJobs, currentTemplateDrivenJobNames, templateJobs)
         if (!noDelete) {
-            println "currentTemplateDrivenJobNames: " + full
-            println "expectedJobs.jobName: " + expectedJobs.jobName
             deleteDeprecatedJobs(currentTemplateDrivenJobNames - expectedJobs.jobName)
         }
     }
