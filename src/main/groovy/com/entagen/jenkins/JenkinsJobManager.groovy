@@ -49,8 +49,8 @@ class JenkinsJobManager {
         List<String> nonTemplateBranchNames = allBranchNames - templateBranchName
         List<ConcreteJob> expectedJobs = this.expectedJobs(templateJobs, nonTemplateBranchNames)
 
-        println "currentTemplateDrivenJobNames:\n\t${currentTemplateDrivenJobNames.join('\n\t')}"
-        println "nonTemplateBranchNames:\n\t${nonTemplateBranchNames.join('\n\t')}"
+        //println "currentTemplateDrivenJobNames:\n\t${currentTemplateDrivenJobNames.join('\n\t')}"
+        //println "nonTemplateBranchNames:\n\t${nonTemplateBranchNames.join('\n\t')}"
         println "expectedJobs:\n\t${expectedJobs.jobName.join('\n\t')}"
 
         createMissingJobs(expectedJobs, currentTemplateDrivenJobNames, templateJobs)
@@ -76,9 +76,10 @@ class JenkinsJobManager {
     public void deleteDeprecatedJobs(List<String> deprecatedJobNames) {
         if (!deprecatedJobNames) return
 
-        println "Delete candidate jobs:\n\t${deprecatedJobNames.join('\n\t')}"
+        //println "Delete candidate jobs:\n\t${deprecatedJobNames.join('\n\t')}"
 
-        List<String> filteredJobNamesToDelete = deprecatedJobNames.findAll{it =~ /^$templateJobPrefix-feature-.*$/}
+        // Only delete jobs containing -feature- like DBA-feature-MOBDK-xxxx
+        List<String> filteredJobNamesToDelete = deprecatedJobNames.findAll{it =~ /^$templateJobPrefix-feature-((?!-TestFlight).)*$/}
 
         println "Deleting deprecated jobs:\n\t${filteredJobNamesToDelete.join('\n\t')}"
         filteredJobNamesToDelete.each { String jobName ->
@@ -103,14 +104,12 @@ class JenkinsJobManager {
     }
 
     List<TemplateJob> findRequiredTemplateJobs(List<String> allJobNames) {
+        // Look for template jobs like DBA-Master-Unit-T
         String regex = /^(?i)($templateJobPrefix)-($templateBranchName)-.*-T$/
 
         List<TemplateJob> templateJobs = allJobNames.findResults { String jobName ->
             TemplateJob templateJob = null
-            jobName.find(regex) { full, baseJobName, branchName ->
-		println "jobName: " + full
-		println "baseJobName: " + baseJobName
-		println "templateBranchName: " + branchName
+            jobName.find(regex) { full, baseJobName, branchName ->		
                 templateJob = new TemplateJob(jobName: full, baseJobName: baseJobName, templateBranchName: branchName)
             }
             return templateJob
