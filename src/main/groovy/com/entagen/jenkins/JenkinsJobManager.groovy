@@ -76,6 +76,8 @@ class JenkinsJobManager {
     public void deleteDeprecatedJobs(List<String> deprecatedJobNames) {
         if (!deprecatedJobNames) return
 
+        println "Delete candidate jobs:\n\t${deprecatedJobNames.join('\n\t')}"
+
         List<String> filteredJobNamesToDelete = deprecatedJobNames.findAll{it =~ /^$templateJobPrefix-feature-.*$/}
 
         println "Deleting deprecated jobs:\n\t${filteredJobNamesToDelete.join('\n\t')}"
